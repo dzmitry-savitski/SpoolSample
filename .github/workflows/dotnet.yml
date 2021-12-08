@@ -1,0 +1,46 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+      env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+
+    - name: MSBuild
+      run: msbuild SpoolSample/SpoolSample.csproj
+      env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_number }}
+        release_name: release
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: bin\Debug\SpoolSample.exe
+        asset_name: SpoolSample.exe
+        asset_content_type: application/octet-stream
