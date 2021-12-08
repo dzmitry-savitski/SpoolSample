@@ -44,6 +44,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: bin\Release\SpoolSample.exe
+        asset_path: SpoolSample\bin\Release\SpoolSample.exe
         asset_name: SpoolSample.exe
         asset_content_type: application/octet-stream
